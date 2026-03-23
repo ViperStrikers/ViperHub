@@ -1,311 +1,167 @@
--- [[ VIPER SYNDICATE - REBORN BUILD 3.9 ]] --
--- Features: ALL-IN-ONE (Aimbot, Target, Wallcheck, ESP, Hitbox, Speed)
--- Fixes: Stuck Black Screen, Hello Notification position, Placeholder Key, ESP Lag
--- Status: 100% OPERATIONAL & IMMORTAL 
+-- [[ VIPER SYNDICATE - GODSPEED BUILD 4.0 ]] --
+-- OPTIMIZED FOR ANDROID
+-- FIX: ESP, AIMBOT LAG, NOTIFICATION, KEY SYSTEM
 
 pcall(function()
     local Viper = {
-        Aimbot = {Enabled = false, Target = "Head", Smoothness = 0.05, FOVSize = 150, FOVVisible = true, WallCheck = true},
-        ESP = {Enabled = false, Box = false, Tracer = false, Name = false},
-        Misc = {Speed = 16, HitboxSize = 2}
+        Aimbot = {Enabled = false, Target = "Head", Smooth = 0.1, FOV = 120},
+        ESP = {Enabled = false, Color = Color3.fromRGB(255, 0, 0)},
+        Misc = {Speed = 16, Hitbox = 2}
     }
 
     local Players = game:GetService("Players")
-    local LocalPlayer = Players.LocalPlayer
-    local Camera = workspace.CurrentCamera
-    local RunService = game:GetService("RunService")
-    local TweenService = game:GetService("TweenService")
-    local CoreGui = game:GetService("CoreGui")
+    local lp = Players.LocalPlayer
+    local mouse = lp:GetMouse()
+    local cam = workspace.CurrentCamera
+    local run = game:GetService("RunService")
 
-    -- [[ 1. NEW KEY SYSTEM UI (ANTI-BUG) ]] --
-    local KeyGui = Instance.new("ScreenGui", CoreGui)
-    KeyGui.Name = "ViperKeySys"
-    KeyGui.DisplayOrder = 100 
+    -- [[ 1. KEY SYSTEM UI ]] --
+    local kgui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+    kgui.DisplayOrder = 999
+    
+    local kframe = Instance.new("Frame", kgui)
+    kframe.Size = UDim2.new(0, 280, 0, 180)
+    kframe.Position = UDim2.new(0.5, -140, 0.5, -90)
+    kframe.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
+    Instance.new("UICorner", kframe)
 
-    local KeyFrame = Instance.new("Frame", KeyGui)
-    KeyFrame.Size = UDim2.new(0, 320, 0, 240)
-    KeyFrame.Position = UDim2.new(0.5, -160, 0.5, -120)
-    KeyFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-    KeyFrame.BorderSizePixel = 0
-    Instance.new("UICorner", KeyFrame).CornerRadius = UDim.new(0, 8)
-    local FrameStroke = Instance.new("UIStroke", KeyFrame)
-    FrameStroke.Color = Color3.fromRGB(50, 50, 50)
-    FrameStroke.Thickness = 1.5
+    local klabel = Instance.new("TextLabel", kframe)
+    klabel.Size = UDim2.new(1, 0, 0, 40)
+    klabel.Text = "ENTER KEY"
+    klabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+    klabel.Font = "GothamBold"
+    klabel.TextSize = 20
+    klabel.BackgroundTransparency = 1
 
-    local KeyTitle = Instance.new("TextLabel", KeyFrame)
-    KeyTitle.Size = UDim2.new(1, 0, 0, 60)
-    KeyTitle.Text = "VIPER SYNDICATE"
-    KeyTitle.TextColor3 = Color3.fromRGB(255, 0, 0)
-    KeyTitle.Font = Enum.Font.GothamBold
-    KeyTitle.TextSize = 24
-    KeyTitle.BackgroundTransparency = 1
+    local kinput = Instance.new("TextBox", kframe)
+    kinput.Size = UDim2.new(0, 220, 0, 40)
+    kinput.Position = UDim2.new(0.5, -110, 0.4, 0)
+    kinput.PlaceholderText = "( Enter Key )"
+    kinput.Text = ""
+    kinput.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+    kinput.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Instance.new("UICorner", kinput)
 
-    -- KEY INPUT (Placeholder Fix)
-    local KeyInput = Instance.new("TextBox", KeyFrame)
-    KeyInput.Size = UDim2.new(0, 260, 0, 50)
-    KeyInput.Position = UDim2.new(0.5, -130, 0, 80)
-    KeyInput.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    KeyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-    KeyInput.Font = Enum.Font.GothamSemibold
-    KeyInput.TextSize = 18
-    KeyInput.Text = ""
-    KeyInput.PlaceholderText = "( Enter Key )" 
-    KeyInput.PlaceholderColor3 = Color3.fromRGB(120, 120, 120)
-    Instance.new("UICorner", KeyInput)
+    local kbtn = Instance.new("TextButton", kframe)
+    kbtn.Size = UDim2.new(0, 220, 0, 40)
+    kbtn.Position = UDim2.new(0.5, -110, 0.75, 0)
+    kbtn.Text = "LOGIN"
+    kbtn.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+    kbtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    Instance.new("UICorner", kbtn)
 
-    local StatusLabel = Instance.new("TextLabel", KeyFrame)
-    StatusLabel.Size = UDim2.new(1, 0, 0, 30)
-    StatusLabel.Position = UDim2.new(0, 0, 0, 135)
-    StatusLabel.Text = ""
-    StatusLabel.Font = Enum.Font.GothamSemibold
-    StatusLabel.TextSize = 16
-    StatusLabel.BackgroundTransparency = 1
+    -- [[ 2. MAIN ENGINE ]] --
+    local function StartViper()
+        local mgui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+        local mframe = Instance.new("Frame", mgui)
+        mframe.Size = UDim2.new(0, 400, 0, 250)
+        mframe.Position = UDim2.new(0.5, -200, 0.5, -125)
+        mframe.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
+        mframe.Visible = true
+        Instance.new("UICorner", mframe)
 
-    local SubmitBtn = Instance.new("TextButton", KeyFrame)
-    SubmitBtn.Size = UDim2.new(0, 260, 0, 50)
-    SubmitBtn.Position = UDim2.new(0.5, -130, 0, 165)
-    SubmitBtn.Text = "LOGIN"
-    SubmitBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-    SubmitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    SubmitBtn.Font = Enum.Font.GothamBold
-    SubmitBtn.TextSize = 20
-    Instance.new("UICorner", SubmitBtn)
+        -- HELLO NOTIF (TENGAH LAYAR)
+        local hello = Instance.new("TextLabel", mgui)
+        hello.Size = UDim2.new(0, 200, 0, 50)
+        hello.Position = UDim2.new(0.5, -100, 0.2, 0)
+        hello.Text = "Hello :D"
+        hello.TextColor3 = Color3.fromRGB(255, 0, 0)
+        hello.Font = "GothamBold"
+        hello.TextSize = 30
+        hello.BackgroundTransparency = 1
+        task.delay(3, function() hello:Destroy() end)
 
-    -- [[ 2. MAIN HUB CONSTRUCTION (Hidden initially) ]] --
-    local MainGui = Instance.new("ScreenGui", CoreGui)
-    MainGui.Name = "ViperHubv39"
-    MainGui.Enabled = false
-    MainGui.ResetOnSpawn = false
+        -- DISCORD BUTTON 
+        local dbtn = Instance.new("TextButton", mframe)
+        dbtn.Size = UDim2.new(0, 150, 0, 30)
+        dbtn.Position = UDim2.new(0.6, 0, 0.05, 0)
+        dbtn.Text = "Copy Discord Link"
+        dbtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
+        dbtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Instance.new("UICorner", dbtn)
+        dbtn.MouseButton1Click:Connect(function() setclipboard("https://discord.gg/QJJkHmsuX") dbtn.Text = "COPIED!" end)
 
-    local function CreateHub()
-        local MainFrame = Instance.new("Frame", MainGui)
-        MainFrame.Size = UDim2.new(0, 480, 0, 340)
-        MainFrame.Position = UDim2.new(0.5, -240, 0.5, -170)
-        MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-        MainFrame.BorderSizePixel = 0
-        Instance.new("UICorner", MainFrame)
-
-        local ToggleIcon = Instance.new("TextButton", MainGui)
-        ToggleIcon.Size = UDim2.new(0, 55, 0, 55)
-        ToggleIcon.Position = UDim2.new(0, 15, 0.4, 0)
-        ToggleIcon.Text = "V"
-        ToggleIcon.BackgroundColor3 = Color3.fromRGB(30, 0, 0)
-        ToggleIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
-        ToggleIcon.Font = Enum.Font.GothamBold
-        ToggleIcon.TextSize = 28
-        ToggleIcon.Draggable = true -- Floating Icon Fixed
-        Instance.new("UICorner", ToggleIcon).CornerRadius = UDim.new(1, 0)
-        Instance.new("UIStroke", ToggleIcon).Color = Color3.fromRGB(255, 0, 0)
-
-        ToggleIcon.MouseButton1Click:Connect(function() MainFrame.Visible = not MainFrame.Visible end)
-
-        local Sidebar = Instance.new("Frame", MainFrame)
-        Sidebar.Size = UDim2.new(0, 140, 1, 0)
-        Sidebar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-        Instance.new("UICorner", Sidebar)
-
-        local PageHolder = Instance.new("Frame", MainFrame)
-        PageHolder.Position = UDim2.new(0, 150, 0, 10)
-        PageHolder.Size = UDim2.new(1, -160, 1, -20)
-        PageHolder.BackgroundTransparency = 1
-
-        local function CreateTab(name, order)
-            local b = Instance.new("TextButton", Sidebar)
-            b.Size = UDim2.new(1, -10, 0, 38)
-            b.Position = UDim2.new(0, 5, 0, 20 + (order * 43))
-            b.Text = name b.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-            b.TextColor3 = Color3.fromRGB(255, 255, 255)
-            b.Font = Enum.Font.GothamSemibold
-            Instance.new("UICorner", b)
-            local pg = Instance.new("ScrollingFrame", PageHolder)
-            pg.Size = UDim2.new(1, 0, 1, 0)
-            pg.Visible = false pg.BackgroundTransparency = 1
-            pg.ScrollBarThickness = 0
-            Instance.new("UIListLayout", pg).Padding = UDim.new(0, 6)
-            b.MouseButton1Click:Connect(function()
-                for _, p in pairs(PageHolder:GetChildren()) do if p:IsA("ScrollingFrame") then p.Visible = false end end
-                pg.Visible = true
-            end)
-            return pg
-        end
-
-        local function AddToggle(pnt, txt, cb)
-            local b = Instance.new("TextButton", pnt)
-            b.Size = UDim2.new(1, -10, 0, 42)
+        -- TOGGLES (Combat & ESP)
+        local function toggle(txt, pos, cb)
+            local b = Instance.new("TextButton", mframe)
+            b.Size = UDim2.new(0, 180, 0, 35)
+            b.Position = pos
+            b.Text = txt .. " [OFF]"
             b.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-            b.Text = txt .. " [OFF]" b.TextColor3 = Color3.fromRGB(255, 255, 255)
+            b.TextColor3 = Color3.fromRGB(255, 255, 255)
             Instance.new("UICorner", b)
             local s = false
             b.MouseButton1Click:Connect(function()
                 s = not s
                 b.Text = txt .. (s and " [ON]" or " [OFF]")
-                b.BackgroundColor3 = s and Color3.fromRGB(200, 0, 0) or Color3.fromRGB(30, 30, 30)
+                b.BackgroundColor3 = s and Color3.fromRGB(150, 0, 0) or Color3.fromRGB(30, 30, 30)
                 cb(s)
             end)
         end
 
-        local function AddInput(pnt, plch, cb)
-            local box = Instance.new("TextBox", pnt)
-            box.Size = UDim2.new(1, -10, 0, 42)
-            box.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
-            box.PlaceholderText = plch
-            box.Text = "" box.TextColor3 = Color3.fromRGB(255, 255, 255)
-            Instance.new("UICorner", box)
-            box.FocusLost:Connect(function() cb(box.Text) end)
-        end
+        toggle("Aimbot", UDim2.new(0.05, 0, 0.2, 0), function(v) Viper.Aimbot.Enabled = v end)
+        toggle("Wallcheck", UDim2.new(0.05, 0, 0.4, 0), function(v) Viper.Aimbot.WallCheck = v end)
+        toggle("ESP Box", UDim2.new(0.55, 0, 0.2, 0), function(v) Viper.ESP.Enabled = v end)
+        toggle("Big Hitbox", UDim2.new(0.55, 0, 0.4, 0), function(v) Viper.Misc.Hitbox = v and 10 or 2 end)
 
-        -- TABS
-        local Combat = CreateTab("Combat", 0)
-        AddToggle(Combat, "Aimbot", function(v) Viper.Aimbot.Enabled = v end)
-        AddToggle(Combat, "Wall Check", function(v) Viper.Aimbot.WallCheck = v end)
-        AddToggle(Combat, "Wallbang", function(v) Viper.Aimbot.Wallbang = v end)
-        AddInput(Combat, "Target (Head/Torso/HRP)", function(t) Viper.Aimbot.Target = t end)
-        AddInput(Combat, "Smoothness (1-100)", function(t) 
-            local n = tonumber(t) if n then Viper.Aimbot.Smoothness = (101 - n) / 500 end 
+        -- (PERFORMANCE MODE)
+        run.RenderStepped:Connect(function()
+            for _, p in pairs(Players:GetPlayers()) do
+                if p ~= lp and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
+                    local char = p.Character
+                    local hrp = char.HumanoidRootPart
+                    
+                    -- ESP BOX (RE-FIXED)
+                    if Viper.ESP.Enabled then
+                        if not char:FindFirstChild("ViperESP") then
+                            local h = Instance.new("Highlight", char)
+                            h.Name = "ViperESP"
+                            h.FillTransparency = 0.5
+                            h.OutlineColor = Color3.fromRGB(255, 0, 0)
+                        end
+                    else
+                        if char:FindFirstChild("ViperESP") then char.ViperESP:Destroy() end
+                    end
+
+                    -- HITBOX
+                    hrp.Size = Vector3.new(Viper.Misc.Hitbox, Viper.Misc.Hitbox, Viper.Misc.Hitbox)
+                end
+            end
+
+            -- AIMBOT (NO LAG)
+            if Viper.Aimbot.Enabled then
+                local target = nil
+                local dist = Viper.Aimbot.FOV
+                for _, p in pairs(Players:GetPlayers()) do
+                    if p ~= lp and p.Character and p.Character:FindFirstChild(Viper.Aimbot.Target) then
+                        local part = p.Character[Viper.Aimbot.Target]
+                        local pos, vis = cam:WorldToViewportPoint(part.Position)
+                        if vis then
+                            local mag = (Vector2.new(pos.X, pos.Y) - Vector2.new(mouse.X, mouse.Y)).Magnitude
+                            if mag < dist then
+                                -- Wallcheck
+                                local ray = Ray.new(cam.CFrame.Position, (part.Position - cam.CFrame.Position).Unit * 500)
+                                local hit = workspace:FindPartOnRayWithIgnoreList(ray, {lp.Character, p.Character})
+                                if not hit then target = part; dist = mag end
+                            end
+                        end
+                    end
+                end
+                if target then cam.CFrame = cam.CFrame:Lerp(CFrame.new(cam.CFrame.Position, target.Position), Viper.Aimbot.Smooth) end
+            end
         end)
-
-        local Visuals = CreateTab("Visuals", 1)
-        AddToggle(Visuals, "Master ESP", function(v) Viper.ESP.Enabled = v end)
-        AddToggle(Visuals, "ESP Box", function(v) Viper.ESP.Box = v end)
-        AddToggle(Visuals, "ESP Tracer", function(v) Viper.ESP.Tracer = v end)
-        AddToggle(Visuals, "ESP Name", function(v) Viper.ESP.Name = v end)
-
-        local Misc = CreateTab("Misc", 2)
-        AddInput(Misc, "Hitbox Size (1-10)", function(t) Viper.Misc.HitboxSize = tonumber(t) or 2 end)
-        AddInput(Misc, "Set Speed", function(t) LocalPlayer.Character.Humanoid.WalkSpeed = tonumber(t) or 16 end)
-        
-        local Disc = Instance.new("TextButton", Misc)
-        Disc.Size = UDim2.new(1, -10, 0, 42)
-        Disc.Text = "Copy Discord Link"
-        Disc.BackgroundColor3 = Color3.fromRGB(88, 101, 242)
-        Disc.TextColor3 = Color3.fromRGB(255, 255, 255)
-        Instance.new("UICorner", Disc)
-        Disc.MouseButton1Click:Connect(function() setclipboard("https://discord.gg/QJJkHmsuX") Disc.Text = "COPIED!" task.wait(2) Disc.Text = "Copy Discord Link" end)
-
-        PageHolder:GetChildren()[1].Visible = true
-        
-        -- [[ 3. CUSTOM TOP NOTIFICATION (ANTI-BUG) ]] --
-        local NotifFrame = Instance.new("Frame", MainGui)
-        NotifFrame.Size = UDim2.new(0, 250, 0, 60)
-        NotifFrame.Position = UDim2.new(0.5, -125, -0.2, 0) -- Mulai dari atas layar
-        NotifFrame.BackgroundColor3 = Color3.fromRGB(20, 0, 0)
-        Instance.new("UICorner", NotifFrame)
-        Instance.new("UIStroke", NotifFrame).Color = Color3.fromRGB(255, 0, 0)
-        
-        local NotifTxt = Instance.new("TextLabel", NotifFrame)
-        NotifTxt.Size = UDim2.new(1, 0, 1, 0)
-        NotifTxt.Text = "Hello :D | Viper Syndicate"
-        NotifTxt.TextColor3 = Color3.fromRGB(255, 255, 255)
-        NotifTxt.Font = Enum.Font.GothamBold
-        NotifTxt.TextSize = 16
-        NotifTxt.BackgroundTransparency = 1
-        
-        -- Animasi notifikasi muncul
-        NotifFrame:TweenPosition(UDim2.new(0.5, -125, 0.05, 0), "Out", "Bounce", 0.5)
-        task.wait(4)
-        NotifFrame:TweenPosition(UDim2.new(0.5, -125, -0.2, 0), "In", "Quad", 0.5)
-        task.wait(0.5)
-        NotifFrame:Destroy()
     end
 
-    -- [[ 4. KEY CHECK LOGIC (FIX STUCK Hitam) ]] --
-    SubmitBtn.MouseButton1Click:Connect(function()
-        if KeyInput.Text == "ViperIsTheBest" then
-            StatusLabel.Text = "Success!" StatusLabel.TextColor3 = Color3.fromRGB(0, 255, 0)
-            task.wait(1)
-            -- Tween Out Key Gui
-            TweenService:Create(KeyFrame, TweenInfo.new(0.5), {Position = UDim2.new(0.5, -160, 1.2, 0)}):Play()
-            task.wait(0.5)
-            KeyGui:Destroy()
-            
-            CreateHub() -- Bikin menu aslinya
-            MainGui.Enabled = true -- Munculkan menu aslinya
-            pcall(function() print("Viper Hub Activated!") end)
+    -- [[ 3. KEY CHECK ]] --
+    kbtn.MouseButton1Click:Connect(function()
+        if kinput.Text == "ViperIsTheBest" then
+            kframe:Destroy()
+            StartViper()
         else
-            StatusLabel.Text = "Fail" StatusLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
-            task.wait(1) StatusLabel.Text = ""
-        end
-    end)
-
-    -- [[ 5. STABLE CORE ENGINE (Optimized for Realme) ]] --
-    RunService.RenderStepped:Connect(function()
-        if MainGui.Enabled then
-            pcall(function()
-                local center = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2)
-                
-                -- POV Circle Persistence
-                local POV = MainGui:FindFirstChild("POV") or Instance.new("Frame", MainGui)
-                POV.Name = "POV"
-                POV.Visible = Viper.Aimbot.FOVVisible and Viper.Aimbot.Enabled
-                POV.Size = UDim2.new(0, Viper.Aimbot.FOVSize, 0, Viper.Aimbot.FOVSize)
-                POV.Position = UDim2.new(0.5, 0, 0.5, 0)
-                POV.AnchorPoint = Vector2.new(0.5, 0.5)
-                POV.BackgroundTransparency = 1
-                if not POV:FindFirstChild("Stroke") then 
-                    Instance.new("UIStroke", POV).Color = Color3.fromRGB(255, 0, 0)
-                    Instance.new("UICorner", POV).CornerRadius = UDim.new(1, 0)
-                end
-
-                for _, p in pairs(Players:GetPlayers()) do
-                    if p ~= LocalPlayer and p.Character then
-                        local char = p.Character
-                        local hrp = char:FindFirstChild("HumanoidRootPart")
-                        local head = char:FindFirstChild("Head")
-                        if hrp and head then
-                            -- HITBOX EXPANDER
-                            hrp.Size = Vector3.new(Viper.Misc.HitboxSize, Viper.Misc.HitboxSize, Viper.Misc.HitboxSize)
-                            hrp.Transparency = 0.7
-                            hrp.CanCollide = false
-
-                            -- ESP RENDER
-                            local pos, vis = Camera:WorldToViewportPoint(hrp.Position)
-                            local folder = MainGui:FindFirstChild(p.Name.."_ESP") or Instance.new("Folder", MainGui)
-                            folder.Name = p.Name.."_ESP"
-
-                            if Viper.ESP.Enabled and vis then
-                                -- Stable BOX
-                                local b = folder:FindFirstChild("B") or Instance.new("Frame", folder)
-                                b.Name = "B"; b.Visible = Viper.ESP.Box
-                                b.Size = UDim2.new(0, 2500/pos.Z, 0, 3500/pos.Z)
-                                b.Position = UDim2.new(0, pos.X - b.Size.X.Offset/2, 0, pos.Y - b.Size.Y.Offset/2)
-                                b.BackgroundTransparency = 1
-                                if not b:FindFirstChild("S") then Instance.new("UIStroke", b).Color = Color3.fromRGB(255, 0, 0) end
-                            else
-                                folder:ClearAllChildren()
-                            end
-                        end
-                    end
-                end
-
-                -- AIMBOT EXECUTION (With Wallcheck)
-                if Viper.Aimbot.Enabled then
-                    local target = nil
-                    local maxDist = Viper.Aimbot.FOVSize / 2
-                    for _, p in pairs(Players:GetPlayers()) do
-                        if p ~= LocalPlayer and p.Character then
-                            local part = p.Character:FindFirstChild(Viper.Aimbot.Target) or p.Character:FindFirstChild("HumanoidRootPart")
-                            if part then
-                                local pos, vis = Camera:WorldToViewportPoint(part.Position)
-                                if vis then
-                                    -- WALLCHECK
-                                    local isVisible = true
-                                    if Viper.Aimbot.WallCheck then
-                                        local ray = Ray.new(Camera.CFrame.Position, (part.Position - Camera.CFrame.Position).Unit * 500)
-                                        local hit = workspace:FindPartOnRayWithIgnoreList(ray, {LocalPlayer.Character, p.Character})
-                                        if hit then isVisible = false end
-                                    end
-
-                                    if isVisible then
-                                        local dist = (Vector2.new(pos.X, pos.Y) - center).Magnitude
-                                        if dist < maxDist then target = part; maxDist = dist end
-                                    end
-                                end
-                            end
-                        end
-                    end
-                    if target then Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.Position, target.Position), Viper.Aimbot.Smoothness) end
-                end
-            end)
+            kbtn.Text = "FAIL"
+            kbtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+            task.wait(1)
+            kbtn.Text = "LOGIN"
         end
     end)
 end)
