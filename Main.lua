@@ -1,218 +1,190 @@
--- [[ VIPER SYNDICATE - ULTIMATE HUB BUILD 2.4 ]] --
+-- [[ VIPER SYNDICATE - IMMORTAL HUB BUILD 2.7 ]] --
 -- Lead Developer: Viper (ViperStrikers)
--- Status: GREETING ADDED & ALL SYSTEMS STABLE
+-- Status: ANTI-BUG, ANTI-LAG, ANTI-KICK
 -- Discord: https://discord.gg/QJJkHmsuX
 
--- [[ Sapaan Pertama Kali Execute ]] --
-print("Hello :D")
-game:GetService("StarterGui"):SetCore("SendNotification", {
-    Title = "Viper Hub",
-    Text = "Hello :D",
-    Duration = 5
-})
-
-local Viper = {
-    Aimbot = {
-        Enabled = false,
-        Target = "Head",
-        Smoothness = 0.07, 
-        FOVSize = 120,
-        FOVVisible = true,
-        WallCheck = true
-    },
-    ESP = {Enabled = false},
-    UI = {
-        MainColor = Color3.fromRGB(12, 12, 12),
-        Accent = Color3.fromRGB(255, 0, 0),
-        Locked = Color3.fromRGB(255, 255, 255)
+pcall(function()
+    print("Hello :D")
+    
+    local Viper = {
+        Aimbot = {Enabled = false, Target = "Head", Smoothness = 0.05, FOVSize = 150, FOVVisible = true},
+        ESP = {Enabled = false},
+        Player = {Speed = 16, Jump = false, Fly = false}
     }
-}
 
--- [ SERVICES ] --
-local Players = game:GetService("Players")
-local LocalPlayer = Players.LocalPlayer
-local Camera = workspace.CurrentCamera
-local RunService = game:GetService("RunService")
-local UserInputService = game:GetService("UserInputService")
+    local Players = game:GetService("Players")
+    local LocalPlayer = Players.LocalPlayer
+    local Camera = workspace.CurrentCamera
+    local RunService = game:GetService("RunService")
+    local UserInputService = game:GetService("UserInputService")
 
--- [[ 1. SECURITY (ANTI-KICK) ]] --
-local function SecureBoot()
-    pcall(function()
-        local mt = getrawmetatable(game)
-        setreadonly(mt, false)
-        local oldNamecall = mt.__namecall
-        mt.__namecall = newcclosure(function(self, ...)
-            if getnamecallmethod() == "Kick" and self == LocalPlayer then return nil end
-            return oldNamecall(self, ...)
-        end)
-        setreadonly(mt, true)
+    -- [[ 1. GOD-LEVEL ANTI-CHEAT BYPASS ]] --
+    local mt = getrawmetatable(game)
+    setreadonly(mt, false)
+    local old = mt.__namecall
+    mt.__namecall = newcclosure(function(self, ...)
+        local method = getnamecallmethod()
+        if method == "Kick" or method == "BreakJoints" then return nil end
+        return old(self, ...)
     end)
-end
-SecureBoot()
+    setreadonly(mt, true)
 
--- [[ 2. DRAWING FOV CIRCLE (CENTERED) ]] --
-local FOVCircle = Drawing.new("Circle")
-FOVCircle.Thickness = 1.5
-FOVCircle.NumSides = 100
-FOVCircle.Filled = false
-FOVCircle.Transparency = 1
-FOVCircle.Color = Viper.UI.Accent
-FOVCircle.Visible = false 
+    -- [[ 2. STABLE UI & POV CONSTRUCTION ]] --
+    local ScreenGui = Instance.new("ScreenGui", game:GetService("CoreGui"))
+    ScreenGui.Name = "ViperHub_Immortal"
 
--- [[ 3. AIMBOT LOGIC ]] --
-local function IsVisible(part)
-    if not Viper.Aimbot.WallCheck then return true end
-    local char = LocalPlayer.Character
-    if not char then return false end
-    local params = RaycastParams.new()
-    params.FilterDescendantsInstances = {char, part.Parent}
-    params.FilterType = Enum.RaycastFilterType.Blacklist
-    local result = workspace:Raycast(Camera.CFrame.Position, (part.Position - Camera.CFrame.Position).Unit * 5000, params)
-    return result == nil
-end
+    -- GREETING NOTIF (Hello :D)
+    local Notif = Instance.new("TextLabel", ScreenGui)
+    Notif.Size = UDim2.new(0, 220, 0, 45)
+    Notif.Position = UDim2.new(0.5, -110, 0.1, 0)
+    Notif.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
+    Notif.TextColor3 = Color3.fromRGB(255, 0, 0)
+    Notif.Text = "Hello :D | Viper Hub Active"
+    Notif.Font = Enum.Font.GothamBold
+    Notif.TextSize = 15
+    Instance.new("UICorner", Notif)
+    task.delay(4, function() pcall(function() Notif:Destroy() end) end)
 
-local function GetClosestToCenter()
-    local target = nil
-    local maxDist = Viper.Aimbot.FOVSize
-    local center = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
+    -- POV CIRCLE (MOBILE STABLE)
+    local POVFrame = Instance.new("Frame", ScreenGui)
+    POVFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+    POVFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
+    POVFrame.BackgroundTransparency = 1
+    POVFrame.Visible = false
+    local POVStroke = Instance.new("UIStroke", POVFrame)
+    POVStroke.Color = Color3.fromRGB(255, 0, 0)
+    POVStroke.Thickness = 2
+    Instance.new("UICorner", POVFrame).CornerRadius = UDim.new(1, 0)
 
-    for _, p in pairs(Players:GetPlayers()) do
-        if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild(Viper.Aimbot.Target) then
-            local hum = p.Character:FindFirstChildOfClass("Humanoid")
-            if hum and hum.Health > 0 then
-                local part = p.Character[Viper.Aimbot.Target]
-                local pos, onScreen = Camera:WorldToViewportPoint(part.Position)
-                
-                if onScreen and IsVisible(part) then
-                    local screenPos = Vector2.new(pos.X, pos.Y)
-                    local dist = (screenPos - center).Magnitude
-                    if dist < maxDist then
-                        maxDist = dist
-                        target = part
+    -- MAIN FRAME
+    local MainFrame = Instance.new("Frame", ScreenGui)
+    MainFrame.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
+    MainFrame.Size = UDim2.new(0, 460, 0, 310)
+    MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
+    MainFrame.Active = true MainFrame.Draggable = true
+    Instance.new("UICorner", MainFrame)
+
+    local Sidebar = Instance.new("Frame", MainFrame)
+    Sidebar.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
+    Sidebar.Size = UDim2.new(0, 130, 1, 0)
+    Instance.new("UICorner", Sidebar)
+
+    local Title = Instance.new("TextLabel", Sidebar)
+    Title.Size = UDim2.new(1, 0, 0, 50)
+    Title.Text = "VIPER HUB"
+    Title.TextColor3 = Color3.fromRGB(255, 0, 0)
+    Title.Font = Enum.Font.GothamBold
+    Title.TextSize = 18
+
+    local TabHolder = Instance.new("ScrollingFrame", Sidebar)
+    TabHolder.Position = UDim2.new(0, 5, 0, 60)
+    TabHolder.Size = UDim2.new(1, -10, 1, -70)
+    TabHolder.BackgroundTransparency = 1
+    TabHolder.ScrollBarThickness = 0
+    Instance.new("UIListLayout", TabHolder).Padding = UDim.new(0, 5)
+
+    local PageHolder = Instance.new("Frame", MainFrame)
+    PageHolder.Position = UDim2.new(0, 140, 0, 10)
+    PageHolder.Size = UDim2.new(1, -150, 1, -20)
+    PageHolder.BackgroundTransparency = 1
+
+    local function CreateTab(name)
+        local btn = Instance.new("TextButton", TabHolder)
+        btn.Size = UDim2.new(1, 0, 0, 35)
+        btn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+        btn.Text = name btn.TextColor3 = Color3.fromRGB(255, 255, 255)
+        btn.Font = Enum.Font.GothamSemibold
+        Instance.new("UICorner", btn)
+        
+        local pg = Instance.new("ScrollingFrame", PageHolder)
+        pg.Size = UDim2.new(1, 0, 1, 0)
+        pg.Visible = false pg.BackgroundTransparency = 1
+        pg.ScrollBarThickness = 2
+        Instance.new("UIListLayout", pg).Padding = UDim.new(0, 8)
+        
+        btn.MouseButton1Click:Connect(function()
+            for _, p in pairs(PageHolder:GetChildren()) do if p:IsA("ScrollingFrame") then p.Visible = false end end
+            pg.Visible = true
+        end)
+        return pg
+    end
+
+    local function AddToggle(parent, text, callback)
+        local b = Instance.new("TextButton", parent)
+        b.Size = UDim2.new(1, -10, 0, 40)
+        b.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+        b.Text = text .. " [OFF]" b.TextColor3 = Color3.fromRGB(255, 255, 255)
+        Instance.new("UICorner", b)
+        
+        local state = false
+        b.MouseButton1Click:Connect(function()
+            state = not state
+            b.Text = text .. (state and " [ON]" or " [OFF]")
+            b.BackgroundColor3 = state and Color3.fromRGB(255, 0, 0) or Color3.fromRGB(30, 30, 30)
+            callback(state)
+        end)
+    end
+
+    -- [[ 3. SETUP PAGES ]] --
+    local Combat = CreateTab("Combat")
+    AddToggle(Combat, "Master Aimbot", function(v) Viper.Aimbot.Enabled = v end)
+    AddToggle(Combat, "Show POV/FOV", function(v) Viper.Aimbot.FOVVisible = v end)
+
+    local Visuals = CreateTab("Visuals")
+    AddToggle(Visuals, "ESP Chams", function(v) Viper.ESP.Enabled = v end)
+
+    local PlayerTab = CreateTab("Player")
+    AddToggle(PlayerTab, "Super Speed (100)", function(v) LocalPlayer.Character.Humanoid.WalkSpeed = v and 100 or 16 end)
+    AddToggle(PlayerTab, "Infinite Jump", function(v) Viper.Player.Jump = v end)
+    AddToggle(PlayerTab, "Fly Mode", function(v) Viper.Player.Fly = v end)
+
+    -- [[ 4. CORE LOOP ]] --
+    UserInputService.JumpRequest:Connect(function()
+        if Viper.Player.Jump then pcall(function() LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping") end) end
+    end)
+
+    RunService.RenderStepped:Connect(function()
+        pcall(function()
+            local center = Vector2.new(Camera.ViewportSize.X/2, Camera.ViewportSize.Y/2)
+            POVFrame.Visible = Viper.Aimbot.FOVVisible and Viper.Aimbot.Enabled
+            POVFrame.Size = UDim2.new(0, Viper.Aimbot.FOVSize, 0, Viper.Aimbot.FOVSize)
+            
+            if Viper.Aimbot.Enabled then
+                local target = nil
+                local maxDist = Viper.Aimbot.FOVSize / 2
+                for _, p in pairs(Players:GetPlayers()) do
+                    if p ~= LocalPlayer and p.Character and p.Character:FindFirstChild("Head") then
+                        local pos, onScreen = Camera:WorldToViewportPoint(p.Character.Head.Position)
+                        if onScreen then
+                            local dist = (Vector2.new(pos.X, pos.Y) - center).Magnitude
+                            if dist < maxDist then target = p.Character.Head; maxDist = dist end
+                        end
+                    end
+                end
+                if target then
+                    POVStroke.Color = Color3.fromRGB(255, 255, 255)
+                    Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.Position, target.Position), Viper.Aimbot.Smoothness)
+                else
+                    POVStroke.Color = Color3.fromRGB(255, 0, 0)
+                end
+            end
+
+            if Viper.Player.Fly then LocalPlayer.Character.HumanoidRootPart.Velocity = Vector3.new(0, 2, 0) end
+
+            if Viper.ESP.Enabled then
+                for _, p in pairs(Players:GetPlayers()) do
+                    if p ~= LocalPlayer and p.Character then
+                        local ch = p.Character:FindFirstChild("ViperChams")
+                        if not ch then
+                            ch = Instance.new("Highlight", p.Character)
+                            ch.Name = "ViperChams"
+                            ch.FillColor = Color3.fromRGB(255, 0, 0)
+                        end
                     end
                 end
             end
-        end
-    end
-    return target
-end
-
--- [[ 4. UI CONSTRUCTION ]] --
-local ScreenGui = Instance.new("ScreenGui")
-ScreenGui.Name = "ViperHub_v24"
-ScreenGui.Parent = game:GetService("CoreGui")
-ScreenGui.ResetOnSpawn = false
-
-local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.BackgroundColor3 = Viper.UI.MainColor
-MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
-MainFrame.Size = UDim2.new(0, 480, 0, 320)
-MainFrame.Active = true MainFrame.Draggable = true
-Instance.new("UICorner", MainFrame)
-
-local Sidebar = Instance.new("Frame", MainFrame)
-Sidebar.BackgroundColor3 = Color3.fromRGB(18, 18, 18)
-Sidebar.Size = UDim2.new(0, 140, 1, 0)
-Instance.new("UICorner", Sidebar)
-
-local Title = Instance.new("TextLabel", Sidebar)
-Title.Text = "( Viper Hub )"
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.TextSize = 20 Title.Font = Enum.Font.GothamBold
-Title.Size = UDim2.new(1, 0, 0, 60)
-
-local PageHolder = Instance.new("Frame", MainFrame)
-PageHolder.BackgroundTransparency = 1
-PageHolder.Position = UDim2.new(0, 150, 0, 10)
-PageHolder.Size = UDim2.new(1, -160, 1, -20)
-
-local TabHolder = Instance.new("Frame", Sidebar)
-TabHolder.Position = UDim2.new(0, 10, 0, 60)
-TabHolder.Size = UDim2.new(1, -20, 1, -70)
-TabHolder.BackgroundTransparency = 1
-Instance.new("UIListLayout", TabHolder).Padding = UDim.new(0, 6)
-
-local Tabs = {} local Pages = {}
-local function CreateTab(name)
-    local btn = Instance.new("TextButton", TabHolder)
-    btn.Size = UDim2.new(1, 0, 0, 35)
-    btn.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
-    btn.Text = name btn.TextColor3 = Color3.fromRGB(255, 255, 255)
-    btn.Font = Enum.Font.GothamSemibold
-    Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
-    
-    local pg = Instance.new("ScrollingFrame", PageHolder)
-    pg.Size = UDim2.new(1, 0, 1, 0)
-    pg.Visible = false pg.BackgroundTransparency = 1
-    pg.ScrollBarThickness = 1
-    Instance.new("UIListLayout", pg).Padding = UDim.new(0, 8)
-    
-    btn.MouseButton1Click:Connect(function()
-        for _, p in pairs(Pages) do p.Visible = false end
-        for _, t in pairs(Tabs) do t.BackgroundColor3 = Color3.fromRGB(25, 25, 25) end
-        pg.Visible = true btn.BackgroundColor3 = Viper.UI.Accent
+        end)
     end)
-    Tabs[name] = btn Pages[name] = pg
-    return pg
-end
 
-local function AddButton(parent, text, cb)
-    local b = Instance.new("TextButton", parent)
-    b.Size = UDim2.new(1, -10, 0, 40)
-    b.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-    b.Text = text b.TextColor3 = Color3.fromRGB(255, 255, 255)
-    Instance.new("UICorner", b)
-    b.MouseButton1Click:Connect(cb)
-end
-
--- [[ 5. FEATURES SETUP ]] --
-local Home = CreateTab("General")
-AddButton(Home, "Join Discord Syndicate", function() setclipboard("https://discord.gg/QJJkHmsuX") end)
-
-local Combat = CreateTab("Combat")
-AddButton(Combat, "Master Aimbot: ON/OFF", function() Viper.Aimbot.Enabled = not Viper.Aimbot.Enabled end)
-AddButton(Combat, "Aimbot FOV: ON/OFF", function() Viper.Aimbot.FOVVisible = not Viper.Aimbot.FOVVisible end)
-AddButton(Combat, "FOV +20", function() Viper.Aimbot.FOVSize = Viper.Aimbot.FOVSize + 20 end)
-AddButton(Combat, "FOV -20", function() Viper.Aimbot.FOVSize = math.max(20, Viper.Aimbot.FOVSize - 20) end)
-AddButton(Combat, "Wallcheck: ON/OFF", function() Viper.Aimbot.WallCheck = not Viper.Aimbot.WallCheck end)
-
-local Visuals = CreateTab("Visuals")
-AddButton(Visuals, "ESP Chams: ON/OFF", function() Viper.ESP.Enabled = not Viper.ESP.Enabled end)
-
--- [[ 6. MAIN RENDER LOOP ]] --
-RunService.RenderStepped:Connect(function()
-    local center = Vector2.new(Camera.ViewportSize.X / 2, Camera.ViewportSize.Y / 2)
-    
-    FOVCircle.Position = center
-    FOVCircle.Radius = Viper.Aimbot.FOVSize
-    FOVCircle.Visible = Viper.Aimbot.FOVVisible and Viper.Aimbot.Enabled
-    
-    if Viper.Aimbot.Enabled then
-        local target = GetClosestToCenter()
-        if target then
-            FOVCircle.Color = Viper.UI.Locked
-            Camera.CFrame = Camera.CFrame:Lerp(CFrame.new(Camera.CFrame.Position, target.Position), Viper.Aimbot.Smoothness)
-        else
-            FOVCircle.Color = Viper.UI.Accent
-        end
-    end
-
-    for _, p in pairs(Players:GetPlayers()) do
-        if p ~= LocalPlayer and p.Character then
-            local chams = p.Character:FindFirstChild("ViperChams")
-            if Viper.ESP.Enabled then
-                if not chams then
-                    chams = Instance.new("Highlight", p.Character)
-                    chams.Name = "ViperChams"
-                    chams.FillColor = Viper.UI.Accent
-                end
-                chams.Enabled = true
-            elseif chams then
-                chams.Enabled = false
-            end
-        end
-    end
+    PageHolder:GetChildren()[1].Visible = true
 end)
-
-Pages["General"].Visible = true
-Tabs["General"].BackgroundColor3 = Viper.UI.Accent
