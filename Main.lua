@@ -1,7 +1,7 @@
 -- [[ VIPER SYNDICATE - REBORN BUILD 3.9 ]] --
 -- Features: ALL-IN-ONE (Aimbot, Target, Wallcheck, ESP, Hitbox, Speed)
 -- Fixes: Stuck Black Screen, Hello Notification position, Placeholder Key, ESP Lag
--- Status: 100% OPERATIONAL & IMMORTAL (Optimized for Realme C31)
+-- Status: 100% OPERATIONAL & IMMORTAL 
 
 pcall(function()
     local Viper = {
@@ -20,7 +20,7 @@ pcall(function()
     -- [[ 1. NEW KEY SYSTEM UI (ANTI-BUG) ]] --
     local KeyGui = Instance.new("ScreenGui", CoreGui)
     KeyGui.Name = "ViperKeySys"
-    KeyGui.DisplayOrder = 100 -- Pastikan paling depan
+    KeyGui.DisplayOrder = 100 
 
     local KeyFrame = Instance.new("Frame", KeyGui)
     KeyFrame.Size = UDim2.new(0, 320, 0, 240)
@@ -49,7 +49,7 @@ pcall(function()
     KeyInput.Font = Enum.Font.GothamSemibold
     KeyInput.TextSize = 18
     KeyInput.Text = ""
-    KeyInput.PlaceholderText = "( Enter Key )" -- Sesuai Request
+    KeyInput.PlaceholderText = "( Enter Key )" 
     KeyInput.PlaceholderColor3 = Color3.fromRGB(120, 120, 120)
     Instance.new("UICorner", KeyInput)
 
