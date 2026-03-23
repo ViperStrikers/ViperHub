@@ -1,11 +1,12 @@
--- [[ VIPER HUB - THE ULTIMATE BUILD 6.0 ]] --
--- Features: Fullscreen Hello :D, Resizable POV, ESP Chams, Tabs UI
+-- [[ VIPER HUB - THE FLAWLESS ESP BUILD 7.0 ]] --
+-- Fix: ESP Total Rework (BillboardGui System = 100% Stable on Mobile)
+-- Removed: Hitbox & Speed (As Requested)
+-- Retained: Fullscreen Hello, Tabs, Resizable POV, Smooth Aimbot
 
 pcall(function()
     local Viper = {
         Aimbot = {Enabled = false, Target = "Head", Smoothness = 0.05, FOV = 150, WallCheck = true, Wallbang = false},
-        ESP = {Enabled = false, Box = false, Tracer = false, Name = false, Chams = false},
-        Misc = {Speed = 16, HitboxSize = 2}
+        ESP = {Enabled = false, Box = false, Tracer = false, Name = false, Chams = false}
     }
 
     local Players = game:GetService("Players")
@@ -53,8 +54,7 @@ pcall(function()
     -- [[ 2. FULLSCREEN HELLO :D ]] --
     local function ShowHelloFullscreen()
         local HelloGui = Instance.new("ScreenGui", Core)
-        HelloGui.DisplayOrder = 9999 
-        
+        HelloGui.DisplayOrder = 9999
         local BG = Instance.new("Frame", HelloGui)
         BG.Size = UDim2.new(1, 0, 1, 0)
         BG.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
@@ -67,8 +67,7 @@ pcall(function()
         Txt.TextSize = 80
         Txt.BackgroundTransparency = 1
         
-        task.wait(2.5) 
-        
+        task.wait(2.5)
         for i = 0, 1, 0.1 do
             BG.BackgroundTransparency = i
             Txt.TextTransparency = i
@@ -77,7 +76,7 @@ pcall(function()
         HelloGui:Destroy()
     end
 
-    -- [[ 3. MAIN HUB (TABS & UI) ]] --
+    -- [[ 3. MAIN HUB & UI ]] --
     local function CreateHub()
         local MainGui = Instance.new("ScreenGui", Core)
         MainGui.Enabled = true
@@ -88,7 +87,6 @@ pcall(function()
         MainFrame.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
         Instance.new("UICorner", MainFrame)
 
-        -- JUDUL VIPER HUB
         local HubTitle = Instance.new("TextLabel", MainFrame)
         HubTitle.Size = UDim2.new(1, 0, 0, 35)
         HubTitle.Text = "  VIPER HUB - SYNDICATE"
@@ -99,7 +97,6 @@ pcall(function()
         HubTitle.BackgroundColor3 = Color3.fromRGB(20, 0, 0)
         Instance.new("UICorner", HubTitle)
 
-        -- TOGGLE BUTTON (V)
         local VBtn = Instance.new("TextButton", MainGui)
         VBtn.Size = UDim2.new(0, 50, 0, 50)
         VBtn.Position = UDim2.new(0, 20, 0.4, 0)
@@ -178,27 +175,24 @@ pcall(function()
         local CombatTab = CreateTab("Combat", 0)
         local VisualsTab = CreateTab("Visuals", 1)
         local MiscTab = CreateTab("Misc", 2)
-        PageHolder:GetChildren()[1].Visible = true -- 
+        PageHolder:GetChildren()[1].Visible = true
 
-        -- COMBAT FEATURES
+        -- COMBAT
         AddToggle(CombatTab, "Aimbot Master", function(v) Viper.Aimbot.Enabled = v end)
         AddToggle(CombatTab, "Wall Check", function(v) Viper.Aimbot.WallCheck = v end)
         AddToggle(CombatTab, "Wallbang", function(v) Viper.Aimbot.Wallbang = v end)
-        AddInput(CombatTab, "Set POV Size (10 - 500)", function(t) Viper.Aimbot.FOV = tonumber(t) or 150 end) 
+        AddInput(CombatTab, "Set POV Size (10 - 500)", function(t) Viper.Aimbot.FOV = tonumber(t) or 150 end)
         AddInput(CombatTab, "Target (Head/Torso/HRP)", function(t) Viper.Aimbot.Target = t end)
         AddInput(CombatTab, "Smoothness (1-100)", function(t) Viper.Aimbot.Smoothness = (101 - tonumber(t or 50)) / 500 end)
 
-        -- VISUALS FEATURES
+        -- VISUALS (ESP)
         AddToggle(VisualsTab, "Master ESP", function(v) Viper.ESP.Enabled = v end)
         AddToggle(VisualsTab, "ESP Box", function(v) Viper.ESP.Box = v end)
         AddToggle(VisualsTab, "ESP Tracer", function(v) Viper.ESP.Tracer = v end)
         AddToggle(VisualsTab, "ESP Name", function(v) Viper.ESP.Name = v end)
-        AddToggle(VisualsTab, "ESP Chams (Fill)", function(v) Viper.ESP.Chams = v end) 
+        AddToggle(VisualsTab, "ESP Chams (Fill)", function(v) Viper.ESP.Chams = v end)
 
-        -- MISC FEATURES
-        AddInput(MiscTab, "Hitbox Size (1-15)", function(t) Viper.Misc.HitboxSize = tonumber(t) or 2 end)
-        AddInput(MiscTab, "Speed Hack", function(t) LP.Character.Humanoid.WalkSpeed = tonumber(t) or 16 end)
-        
+        -- MISC (Hanya Discord, Hitbox & Speed dihapus)
         local Disc = Instance.new("TextButton", MiscTab)
         Disc.Size = UDim2.new(1, -10, 0, 38)
         Disc.Text = "Copy Discord Link"
@@ -207,15 +201,19 @@ pcall(function()
         Instance.new("UICorner", Disc)
         Disc.MouseButton1Click:Connect(function() setclipboard("https://discord.gg/QJJkHmsuX") Disc.Text = "COPIED!" task.wait(2) Disc.Text = "Copy Discord Link" end)
 
-        -- [[ ENGINE LOOP (NO BUG FIX) ]] --
+        -- TRACER FOLDER (Khusus Tracer)
+        local TracerFolder = Instance.new("Folder", MainGui)
+        TracerFolder.Name = "TracerCache"
+
+        -- [[ 4. CORE ENGINE (LAG-FREE ESP & AIMBOT) ]] --
         Run.RenderStepped:Connect(function()
             pcall(function()
                 local Center = Vector2.new(Cam.ViewportSize.X/2, Cam.ViewportSize.Y/2)
                 
-                -- POV RESIZABLE UPDATE
+                -- POV RENDER
                 local POV = MainGui:FindFirstChild("POV") or Instance.new("Frame", MainGui)
                 POV.Name = "POV"; POV.Visible = Viper.Aimbot.Enabled
-                POV.Size = UDim2.new(0, Viper.Aimbot.FOV, 0, Viper.Aimbot.FOV) 
+                POV.Size = UDim2.new(0, Viper.Aimbot.FOV, 0, Viper.Aimbot.FOV)
                 POV.Position = UDim2.new(0.5, 0, 0.5, 0)
                 POV.AnchorPoint = Vector2.new(0.5, 0.5)
                 POV.BackgroundTransparency = 1
@@ -227,66 +225,72 @@ pcall(function()
                 local TargetPart = nil
                 local MinDist = Viper.Aimbot.FOV / 2
 
+                TracerFolder:ClearAllChildren() -- Reset Tracer tiap frame
+
                 for _, p in pairs(Players:GetPlayers()) do
                     if p ~= LP and p.Character and p.Character:FindFirstChild("HumanoidRootPart") then
-                        local HRP = p.Character.HumanoidRootPart
+                        local Char = p.Character
+                        local HRP = Char.HumanoidRootPart
                         local ScreenPos, OnScreen = Cam:WorldToViewportPoint(HRP.Position)
 
-                        -- ESP CHAMS & FOLDER SYSTEM
-                        local Folder = MainGui:FindFirstChild(p.Name.."_ESP") or Instance.new("Folder", MainGui)
-                        Folder.Name = p.Name.."_ESP"
-
-                        -- Chams Highlight
-                        if Viper.ESP.Enabled and Viper.ESP.Chams then
-                            if not p.Character:FindFirstChild("ViperChams") then
-                                local c = Instance.new("Highlight", p.Character)
-                                c.Name = "ViperChams"
-                                c.FillColor = Color3.fromRGB(255, 0, 0)
-                                c.FillTransparency = 0.5
-                                c.OutlineColor = Color3.fromRGB(255, 255, 255)
-                            end
-                        else
-                            if p.Character:FindFirstChild("ViperChams") then p.Character.ViperChams:Destroy() end
+                        -- [[ FLAWLESS ESP SYSTEM (BILLBOARD & HIGHLIGHT) ]] --
+                        -- 1. Chams
+                        local Chams = Char:FindFirstChild("ViperChams")
+                        if not Chams then
+                            Chams = Instance.new("Highlight", Char)
+                            Chams.Name = "ViperChams"
+                            Chams.FillColor = Color3.fromRGB(255, 0, 0)
+                            Chams.FillTransparency = 0.5
+                            Chams.OutlineColor = Color3.fromRGB(255, 255, 255)
                         end
+                        Chams.Enabled = Viper.ESP.Enabled and Viper.ESP.Chams
 
-                        if Viper.ESP.Enabled and OnScreen then
-                            -- Box
-                            local Box = Folder:FindFirstChild("B") or Instance.new("Frame", Folder)
-                            Box.Name = "B"; Box.Visible = Viper.ESP.Box
-                            Box.Size = UDim2.new(0, 2200/ScreenPos.Z, 0, 3200/ScreenPos.Z)
-                            Box.Position = UDim2.new(0, ScreenPos.X - Box.Size.X.Offset/2, 0, ScreenPos.Y - Box.Size.Y.Offset/2)
+                        -- 2. Box & Name 
+                        local BB = HRP:FindFirstChild("ViperESP_BB")
+                        if not BB then
+                            BB = Instance.new("BillboardGui", HRP)
+                            BB.Name = "ViperESP_BB"
+                            BB.AlwaysOnTop = true -- Nembus tembok
+                            BB.Size = UDim2.new(4, 0, 5.5, 0)
+                            BB.ExtentsOffset = Vector3.new(0, 0.2, 0)
+
+                            local Box = Instance.new("Frame", BB)
+                            Box.Name = "Box"
+                            Box.Size = UDim2.new(1, 0, 1, 0)
                             Box.BackgroundTransparency = 1
-                            if not Box:FindFirstChild("S") then Instance.new("UIStroke", Box).Color = Color3.fromRGB(255,0,0) end
-                            
-                            -- Tracer
-                            local Trc = Folder:FindFirstChild("T") or Instance.new("Frame", Folder)
-                            Trc.Name = "T"; Trc.Visible = Viper.ESP.Tracer
+                            local Stroke = Instance.new("UIStroke", Box)
+                            Stroke.Color = Color3.fromRGB(255, 0, 0)
+                            Stroke.Thickness = 1.5
+
+                            local Name = Instance.new("TextLabel", BB)
+                            Name.Name = "PlayerName"
+                            Name.Size = UDim2.new(1, 0, 0, 20)
+                            Name.Position = UDim2.new(0, 0, -0.15, 0)
+                            Name.BackgroundTransparency = 1
+                            Name.TextColor3 = Color3.fromRGB(255, 255, 255)
+                            Name.TextStrokeTransparency = 0 
+                            Name.Font = Enum.Font.GothamBold
+                            Name.TextSize = 12
+                        end
+                        
+                        BB.Enabled = Viper.ESP.Enabled
+                        BB.Box.Visible = Viper.ESP.Box
+                        BB.PlayerName.Visible = Viper.ESP.Name
+                        BB.PlayerName.Text = p.Name
+
+                        -- 3. Tracer (Garis)
+                        if Viper.ESP.Enabled and Viper.ESP.Tracer and OnScreen then
+                            local Trc = Instance.new("Frame", TracerFolder)
+                            Trc.Visible = true
                             Trc.Size = UDim2.new(0, 1.5, 0, (Vector2.new(ScreenPos.X, ScreenPos.Y) - Vector2.new(Center.X, Center.Y*2)).Magnitude)
                             Trc.Position = UDim2.new(0, Center.X, 0, Center.Y*2)
                             Trc.AnchorPoint = Vector2.new(0.5, 0)
                             Trc.Rotation = math.deg(math.atan2(ScreenPos.Y - (Center.Y*2), ScreenPos.X - Center.X)) - 90
                             Trc.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
-                            
-                            -- Name
-                            local Txt = Folder:FindFirstChild("N") or Instance.new("TextLabel", Folder)
-                            Txt.Name = "N"; Txt.Visible = Viper.ESP.Name
-                            Txt.Text = p.Name
-                            Txt.Position = UDim2.new(0, ScreenPos.X, 0, ScreenPos.Y - (1800/ScreenPos.Z))
-                            Txt.Size = UDim2.new(0, 0, 0, 0)
-                            Txt.Font = Enum.Font.GothamBold
-                            Txt.TextSize = 14
-                            Txt.TextColor3 = Color3.fromRGB(255, 255, 255)
-                            Txt.BackgroundTransparency = 1
-                            if not Txt:FindFirstChild("S") then Instance.new("UIStroke", Txt) end
-                        else 
-                            Folder:ClearAllChildren() 
+                            Trc.BorderSizePixel = 0
                         end
 
-                        -- Hitbox Expander
-                        HRP.Size = Vector3.new(Viper.Misc.HitboxSize, Viper.Misc.HitboxSize, Viper.Misc.HitboxSize)
-                        HRP.Transparency = 0.7
-
-                        -- Aimbot Targeting
+                        -- [[ AIMBOT LOGIC ]] --
                         if Viper.Aimbot.Enabled and OnScreen then
                             local Dist = (Vector2.new(ScreenPos.X, ScreenPos.Y) - Center).Magnitude
                             if Dist < MinDist then
@@ -305,12 +309,12 @@ pcall(function()
         end)
     end
 
-    -- [[ 4. LOGIN LOGIC ]] --
+    -- [[ LOGIN LOGIC ]] --
     KBtn.MouseButton1Click:Connect(function()
         if KInput.Text == "ViperIsTheBest" then
             KeyGui:Destroy()
-            ShowHelloFullscreen() 
-            CreateHub() 
+            ShowHelloFullscreen()
+            CreateHub()
         else
             KBtn.Text = "FAIL" KBtn.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
             task.wait(1) KBtn.Text = "LOGIN"
