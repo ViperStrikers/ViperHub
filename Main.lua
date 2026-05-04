@@ -28,13 +28,14 @@ local function applyDarkRedGradient(parent)
 end
 
 -- ========================================== --
---          SETUP SCREEN (FULL ENGLISH)       --
+--          SETUP SCREEN (LAYOUT FIXED)       --
 -- ========================================== --
 
 local SetupFrame = Instance.new("Frame")
 SetupFrame.Name = "SetupFrame"
-SetupFrame.Size = UDim2.new(0, 340, 0, 180)
-SetupFrame.Position = UDim2.new(0.5, -170, 0.5, -90)
+-- Diperbesar sedikit tingginya biar muat semua
+SetupFrame.Size = UDim2.new(0, 340, 0, 200)
+SetupFrame.Position = UDim2.new(0.5, -170, 0.5, -100)
 SetupFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 SetupFrame.BorderSizePixel = 0
 SetupFrame.Parent = ScreenGui
@@ -51,8 +52,8 @@ SetupStroke.Parent = SetupFrame
 applyDarkRedGradient(SetupFrame)
 
 local QuestionText = Instance.new("TextLabel")
-QuestionText.Size = UDim2.new(1, 0, 0, 50)
-QuestionText.Position = UDim2.new(0, 0, 0, 10)
+QuestionText.Size = UDim2.new(1, 0, 0, 40)
+QuestionText.Position = UDim2.new(0, 0, 0, 15)
 QuestionText.BackgroundTransparency = 1
 QuestionText.Text = "Which device are you using?"
 QuestionText.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -73,7 +74,7 @@ local chosenText = randomTexts[math.random(1, #randomTexts)]
 
 local SubText = Instance.new("TextLabel")
 SubText.Size = UDim2.new(1, 0, 0, 20)
-SubText.Position = UDim2.new(0, 0, 0, 60)
+SubText.Position = UDim2.new(0, 0, 0, 55)
 SubText.BackgroundTransparency = 1
 SubText.Text = chosenText
 SubText.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -83,7 +84,7 @@ SubText.Parent = SetupFrame
 
 local BtnPC = Instance.new("TextButton")
 BtnPC.Size = UDim2.new(0, 130, 0, 45)
-BtnPC.Position = UDim2.new(0, 25, 0, 110)
+BtnPC.Position = UDim2.new(0, 25, 0, 130) -- Posisi diturunkan pas
 BtnPC.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 BtnPC.Text = "COMPUTER"
 BtnPC.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -97,7 +98,7 @@ BtnPCCorner.Parent = BtnPC
 
 local BtnPhone = Instance.new("TextButton")
 BtnPhone.Size = UDim2.new(0, 130, 0, 45)
-BtnPhone.Position = UDim2.new(1, -155, 0, 110)
+BtnPhone.Position = UDim2.new(1, -155, 0, 130) -- Posisi diturunkan pas
 BtnPhone.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 BtnPhone.Text = "MOBILE"
 BtnPhone.TextColor3 = Color3.fromRGB(255, 255, 255)
