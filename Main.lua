@@ -162,6 +162,142 @@ TabListLayout.Padding = UDim.new(0, 6)
 TabListLayout.Parent = TabBar
 
 --- ========================================== ---
+---          CORE LOGIC SYSTEM                 ---
+--- ========================================== ---
+
+local espEnabled = {Box = false, Line = false, Skeleton = false, Health = false, NameDistance = false}
+local combat = {Aimbot = false, SilentAim = false, FOVCircle = false, FOVRadius = 100, HitboxSize = 2}
+local movement = {SpinBot = false, AntiVoid = false}
+local misc = {FullBright = false, Fling = false}
+
+-- 1. FOV Circle Drawing Safe Loader
+local fovCircle = nil
+if isDrawingSupported then
+    pcall(function()
+        fovCircle = Drawing.new("Circle")
+        fovCircle.Color = Color3.fromRGB(255, 0, 0)
+        fovCircle.Thickness = 1
+        fovCircle.Filled = false
+        fovCircle.Transparency = 1
+    end)
+end
+
+RunService.RenderStepped:Connect(function()
+    if isDrawingSupported and fovCircle then
+        if combat.FOVCircle then
+            fovCircle.Position = Vector2.new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y)
+            fovCircle.Radius = combat.FOVRadius
+            fovCircle.Visible = true
+        else
+            fovCircle.Visible = false
+        end
+    end
+end)
+
+-- 2. Aimbot Logic
+local function getClosestPlayer()
+    local closestPlayer = nil
+    local shortestDistance = combat.FOVCircle and combat.FOVRadius or math.huge
+    for _, v in pairs(Players:GetPlayers()) do
+        if v ~= player and v.Character and v.Character:FindFirstChild("Head") then
+            local pos, onScreen = Camera:WorldToViewportPoint(v.Character.Head.Position)
+            if onScreen then
+                local mouseLocation = UserInputService:GetMouseLocation()
+                local mag = (Vector2.new(mouseLocation.X, mouseLocation.Y) - Vector2.new(pos.X, pos.Y)).Magnitude
+                if mag < shortestDistance then
+                    closestPlayer = v
+                    shortestDistance = mag
+                end
+            end
+        end
+    end
+    return closestPlayer
+end
+
+RunService.RenderStepped:Connect(function()
+    if combat.Aimbot then
+        local target = getClosestPlayer()
+        if target and target.Character and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then
+            Camera.CFrame = CFrame.new(Camera.CFrame.Position, target.Character.Head.Position)
+        end
+    end
+end)
+
+-- 3. Hitbox Expander Logic
+RunService.RenderStepped:Connect(function()
+    if combat.HitboxSize > 2 then
+        for _, v in pairs(Players:GetPlayers()) do
+            if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                pcall(function()
+                    local hrp = v.Character.HumanoidRootPart
+                    hrp.Size = Vector3.new(combat.HitboxSize, combat.HitboxSize, combat.HitboxSize)
+                    hrp.Transparency = 0.6
+                    hrp.BrickColor = BrickColor.new("Bright red")
+                    hrp.CanCollide = false
+                end)
+            end
+        end
+    end
+end)
+
+-- 4. FullBright Logic
+local origBrightness = Lighting.Brightness
+local origClockTime = Lighting.ClockTime
+RunService.RenderStepped:Connect(function()
+    if misc.FullBright then
+        Lighting.Brightness = 2
+        Lighting.ClockTime = 14
+        Lighting.FogEnd = 786543
+        Lighting.GlobalShadows = false
+    else
+        Lighting.Brightness = origBrightness
+        Lighting.ClockTime = origClockTime
+    end
+end)
+
+-- 5. Anti-Void Logic
+local antiVoidPart = Instance.new("Part")
+antiVoidPart.Size = Vector3.new(2048, 1, 2048)
+antiVoidPart.Transparency = 1
+antiVoidPart.Anchored = true
+antiVoidPart.CanCollide = true
+RunService.RenderStepped:Connect(function()
+    if movement.AntiVoid then
+        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            antiVoidPart.Position = Vector3.new(player.Character.HumanoidRootPart.Position.X, player.Character.HumanoidRootPart.Position.Y - 5, player.Character.HumanoidRootPart.Position.Z)
+            antiVoidPart.Parent = workspace
+        end
+    else
+        antiVoidPart.Parent = nil
+    end
+end)
+
+-- 6. Fling Logic
+RunService.RenderStepped:Connect(function()
+    if misc.Fling and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+        local hrp = player.Character.HumanoidRootPart
+        local closestEnemy = nil
+        local dist = math.huge
+        for _, v in pairs(Players:GetPlayers()) do
+            if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                local m = (hrp.Position - v.Character.HumanoidRootPart.Position).Magnitude
+                if m < 15 and m < dist then
+                    closestEnemy = v
+                    dist = m
+                end
+            end
+        end
+        if closestEnemy then
+            hrp.Velocity = Vector3.new(99999, 99999, 99999)
+            hrp.RotVelocity = Vector3.new(0, 99999, 0)
+        else
+            hrp.Velocity = Vector3.new(0,0,0)
+            hrp.RotVelocity = Vector3.new(0,0,0)
+        end
+    end
+end)
+
+--- ========================================== ---
 ---                 TAB CREATOR                ---
 --- ========================================== ---
 
@@ -261,14 +397,28 @@ local ESPPage = createTab("Visuals", false)
 local MovePage = createTab("Movement", false)
 local MiscPage = createTab("Others", false)
 
--- ADDING TOGGLES
-addToggle(CombatPage, "Aimbot (Right Click)", function(s) end)
-addToggle(CombatPage, "Silent Aim", function(s) end)
-addToggle(ESPPage, "Box ESP", function(s) end)
-addToggle(ESPPage, "Health ESP", function(s) end)
-addToggle(MovePage, "Speed Hack", function(s) end)
-addToggle(MiscPage, "Anti-Void", function(s) end)
-addToggle(MiscPage, "Full Bright", function(s) end)
+-- ADDING FULL ENGLISH TOGGLES
+addToggle(CombatPage, "Aimbot (Right Click)", function(s) combat.Aimbot = s end)
+addToggle(CombatPage, "FOV Circle", function(s) combat.FOVCircle = s end)
+addToggle(CombatPage, "Hitbox Expander", function(s) combat.HitboxSize = s and 10 or 2 end)
+
+addToggle(ESPPage, "Box ESP", function(s) espEnabled.Box = s end)
+addToggle(ESPPage, "Health ESP", function(s) espEnabled.Health = s end)
+
+addToggle(MovePage, "Speed Hack (70)", function(s) 
+    if player.Character and player.Character:FindFirstChild("Humanoid") then
+        player.Character.Humanoid.WalkSpeed = s and 70 or 16 
+    end
+end)
+addToggle(MovePage, "Jump Power (120)", function(s)
+    if player.Character and player.Character:FindFirstChild("Humanoid") then
+        player.Character.Humanoid.JumpPower = s and 120 or 50
+    end
+end)
+
+addToggle(MiscPage, "Anti-Void", function(s) movement.AntiVoid = s end)
+addToggle(MiscPage, "Full Bright", function(s) misc.FullBright = s end)
+addToggle(MiscPage, "Fling Mode", function(s) misc.Fling = s end)
 
 -- CLOSE BUTTON
 local Close = Instance.new("TextButton")
