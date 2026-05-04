@@ -24,14 +24,10 @@ local function applyDarkRedGradient(parent)
     grad.Parent = parent
 end
 
--- ========================================== --
---          SETUP SCREEN                      --
--- ========================================== --
-
 local SetupFrame = Instance.new("Frame")
 SetupFrame.Name = "SetupFrame"
-SetupFrame.Size = UDim2.new(0, 340, 0, 180)
-SetupFrame.Position = UDim2.new(0.5, -170, 0.5, -90)
+SetupFrame.Size = UDim2.new(0, 320, 0, 160)
+SetupFrame.Position = UDim2.new(0.5, -160, 0.5, -80)
 SetupFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 SetupFrame.BorderSizePixel = 0
 SetupFrame.Parent = ScreenGui
@@ -57,7 +53,6 @@ QuestionText.Font = Enum.Font.GothamBold
 QuestionText.TextSize = 16
 QuestionText.Parent = SetupFrame
 
--- RANDOM GREETINGS
 local randomTexts = {
     "This is not a virus btw :D",
     "Hello! Welcome back.",
@@ -70,7 +65,7 @@ local chosenText = randomTexts[math.random(1, #randomTexts)]
 
 local SubText = Instance.new("TextLabel")
 SubText.Size = UDim2.new(1, 0, 0, 20)
-SubText.Position = UDim2.new(0, 0, 0, 50)
+SubText.Position = UDim2.new(0, 0, 0, 45)
 SubText.BackgroundTransparency = 1
 SubText.Text = chosenText
 SubText.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -78,43 +73,34 @@ SubText.Font = Enum.Font.GothamItalic
 SubText.TextSize = 13
 SubText.Parent = SetupFrame
 
-
 local BtnPC = Instance.new("TextButton")
-BtnPC.Size = UDim2.new(0, 130, 0, 42)
-BtnPC.Position = UDim2.new(0, 25, 0, 105)
+BtnPC.Size = UDim2.new(0, 120, 0, 38)
+BtnPC.Position = UDim2.new(0, 25, 0, 95)
 BtnPC.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 BtnPC.Text = "COMPUTER"
 BtnPC.TextColor3 = Color3.fromRGB(255, 255, 255)
 BtnPC.Font = Enum.Font.GothamBold
-BtnPC.TextSize = 14
+BtnPC.TextSize = 13
 BtnPC.Parent = SetupFrame
 
-local BtnPCCorner = Instance.new("UICorner")
-BtnPCCorner.CornerRadius = UDim.new(0, 8)
-BtnPCCorner.Parent = BtnPC
+Instance.new("UICorner", BtnPC).CornerRadius = UDim.new(0, 8)
 
 local BtnPhone = Instance.new("TextButton")
-BtnPhone.Size = UDim2.new(0, 130, 0, 42)
-BtnPhone.Position = UDim2.new(1, -155, 0, 105)
+BtnPhone.Size = UDim2.new(0, 120, 0, 38)
+BtnPhone.Position = UDim2.new(1, -145, 0, 95)
 BtnPhone.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 BtnPhone.Text = "MOBILE"
 BtnPhone.TextColor3 = Color3.fromRGB(255, 255, 255)
 BtnPhone.Font = Enum.Font.GothamBold
-BtnPhone.TextSize = 14
+BtnPhone.TextSize = 13
 BtnPhone.Parent = SetupFrame
 
-local BtnPhoneCorner = Instance.new("UICorner")
-BtnPhoneCorner.CornerRadius = UDim.new(0, 8)
-BtnPhoneCorner.Parent = BtnPhone
-
--- ========================================== --
---          MAIN HUB UI (CLEAN ENGLISH)       --
--- ========================================== --
+Instance.new("UICorner", BtnPhone).CornerRadius = UDim.new(0, 8)
 
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
-MainFrame.Size = UDim2.new(0, 460, 0, 500)
-MainFrame.Position = UDim2.new(0.5, -230, 0.5, -250)
+MainFrame.Size = UDim2.new(0, 460, 0, 480)
+MainFrame.Position = UDim2.new(0.5, -230, 0.5, -240)
 MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
@@ -143,7 +129,6 @@ Title.Font = Enum.Font.GothamBold
 Title.TextSize = 17
 Title.Parent = MainFrame
 
--- TAB BAR
 local TabBar = Instance.new("ScrollingFrame")
 TabBar.Size = UDim2.new(1, -20, 0, 40)
 TabBar.Position = UDim2.new(0, 10, 0, 50)
@@ -158,10 +143,6 @@ TabListLayout.FillDirection = Enum.FillDirection.Horizontal
 TabListLayout.SortOrder = Enum.SortOrder.LayoutOrder
 TabListLayout.Padding = UDim.new(0, 6)
 TabListLayout.Parent = TabBar
-
---- ========================================== ---
----          CORE LOGIC SYSTEM                 ---
---- ========================================== ---
 
 local espEnabled = {Box = false, Line = false, Skeleton = false, Health = false, NameDistance = false}
 local combat = {Aimbot = false, SilentAim = false, FOVCircle = false, FOVRadius = 100, HitboxSize = 2}
@@ -180,74 +161,85 @@ if isDrawingSupported then
 end
 
 RunService.RenderStepped:Connect(function()
-    if isDrawingSupported and fovCircle then
-        if combat.FOVCircle then
-            fovCircle.Position = Vector2.new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y)
-            fovCircle.Radius = combat.FOVRadius
-            fovCircle.Visible = true
-        else
-            fovCircle.Visible = false
+    pcall(function()
+        if isDrawingSupported and fovCircle then
+            if combat.FOVCircle then
+                fovCircle.Position = Vector2.new(UserInputService:GetMouseLocation().X, UserInputService:GetMouseLocation().Y)
+                fovCircle.Radius = combat.FOVRadius
+                fovCircle.Visible = true
+            else
+                fovCircle.Visible = false
+            end
         end
-    end
+    end)
 end)
-
 
 local function getClosestPlayer()
     local closestPlayer = nil
     local shortestDistance = combat.FOVCircle and combat.FOVRadius or math.huge
-    for _, v in pairs(Players:GetPlayers()) do
-        if v ~= player and v.Character and v.Character:FindFirstChild("Head") then
-            local pos, onScreen = Camera:WorldToViewportPoint(v.Character.Head.Position)
-            if onScreen then
-                local mouseLocation = UserInputService:GetMouseLocation()
-                local mag = (Vector2.new(mouseLocation.X, mouseLocation.Y) - Vector2.new(pos.X, pos.Y)).Magnitude
-                if mag < shortestDistance then
-                    closestPlayer = v
-                    shortestDistance = mag
+    pcall(function()
+        for _, v in pairs(Players:GetPlayers()) do
+            if v ~= player and v.Character and v.Character:FindFirstChild("Head") then
+                local pos, onScreen = Camera:WorldToViewportPoint(v.Character.Head.Position)
+                if onScreen then
+                    local mouseLocation = UserInputService:GetMouseLocation()
+                    local mag = (Vector2.new(mouseLocation.X, mouseLocation.Y) - Vector2.new(pos.X, pos.Y)).Magnitude
+                    if mag < shortestDistance then
+                        closestPlayer = v
+                        shortestDistance = mag
+                    end
                 end
             end
         end
-    end
+    end)
     return closestPlayer
 end
 
 RunService.RenderStepped:Connect(function()
-    if combat.Aimbot then
-        local target = getClosestPlayer()
-        if target and target.Character and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then
-            Camera.CFrame = CFrame.new(Camera.CFrame.Position, target.Character.Head.Position)
+    pcall(function()
+        if combat.Aimbot then
+            local target = getClosestPlayer()
+            if target and target.Character and UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton2) then
+                Camera.CFrame = CFrame.new(Camera.CFrame.Position, target.Character.Head.Position)
+            end
         end
-    end
+    end)
 end)
 
 RunService.RenderStepped:Connect(function()
-    if combat.HitboxSize > 2 then
+    pcall(function()
         for _, v in pairs(Players:GetPlayers()) do
             if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
-                pcall(function()
-                    local hrp = v.Character.HumanoidRootPart
+                local hrp = v.Character.HumanoidRootPart
+                if combat.HitboxSize > 2 then
                     hrp.Size = Vector3.new(combat.HitboxSize, combat.HitboxSize, combat.HitboxSize)
                     hrp.Transparency = 0.6
                     hrp.BrickColor = BrickColor.new("Bright red")
                     hrp.CanCollide = false
-                end)
+                else
+                    hrp.Size = Vector3.new(2, 2, 1)
+                    hrp.Transparency = 0
+                    hrp.CanCollide = true
+                end
             end
         end
-    end
+    end)
 end)
 
 local origBrightness = Lighting.Brightness
 local origClockTime = Lighting.ClockTime
 RunService.RenderStepped:Connect(function()
-    if misc.FullBright then
-        Lighting.Brightness = 2
-        Lighting.ClockTime = 14
-        Lighting.FogEnd = 786543
-        Lighting.GlobalShadows = false
-    else
-        Lighting.Brightness = origBrightness
-        Lighting.ClockTime = origClockTime
-    end
+    pcall(function()
+        if misc.FullBright then
+            Lighting.Brightness = 2
+            Lighting.ClockTime = 14
+            Lighting.FogEnd = 786543
+            Lighting.GlobalShadows = false
+        else
+            Lighting.Brightness = origBrightness
+            Lighting.ClockTime = origClockTime
+        end
+    end)
 end)
 
 local antiVoidPart = Instance.new("Part")
@@ -256,43 +248,43 @@ antiVoidPart.Transparency = 1
 antiVoidPart.Anchored = true
 antiVoidPart.CanCollide = true
 RunService.RenderStepped:Connect(function()
-    if movement.AntiVoid then
-        if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-            antiVoidPart.Position = Vector3.new(player.Character.HumanoidRootPart.Position.X, player.Character.HumanoidRootPart.Position.Y - 5, player.Character.HumanoidRootPart.Position.Z)
-            antiVoidPart.Parent = workspace
+    pcall(function()
+        if movement.AntiVoid then
+            if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+                antiVoidPart.Position = Vector3.new(player.Character.HumanoidRootPart.Position.X, player.Character.HumanoidRootPart.Position.Y - 5, player.Character.HumanoidRootPart.Position.Z)
+                antiVoidPart.Parent = workspace
+            end
+        else
+            antiVoidPart.Parent = nil
         end
-    else
-        antiVoidPart.Parent = nil
-    end
+    end)
 end)
 
 RunService.RenderStepped:Connect(function()
-    if misc.Fling and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-        local hrp = player.Character.HumanoidRootPart
-        local closestEnemy = nil
-        local dist = math.huge
-        for _, v in pairs(Players:GetPlayers()) do
-            if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
-                local m = (hrp.Position - v.Character.HumanoidRootPart.Position).Magnitude
-                if m < 15 and m < dist then
-                    closestEnemy = v
-                    dist = m
+    pcall(function()
+        if misc.Fling and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
+            local hrp = player.Character.HumanoidRootPart
+            local closestEnemy = nil
+            local dist = math.huge
+            for _, v in pairs(Players:GetPlayers()) do
+                if v ~= player and v.Character and v.Character:FindFirstChild("HumanoidRootPart") then
+                    local m = (hrp.Position - v.Character.HumanoidRootPart.Position).Magnitude
+                    if m < 15 and m < dist then
+                        closestEnemy = v
+                        dist = m
+                    end
                 end
             end
+            if closestEnemy then
+                hrp.Velocity = Vector3.new(99999, 99999, 99999)
+                hrp.RotVelocity = Vector3.new(0, 99999, 0)
+            else
+                hrp.Velocity = Vector3.new(0,0,0)
+                hrp.RotVelocity = Vector3.new(0,0,0)
+            end
         end
-        if closestEnemy then
-            hrp.Velocity = Vector3.new(99999, 99999, 99999)
-            hrp.RotVelocity = Vector3.new(0, 99999, 0)
-        else
-            hrp.Velocity = Vector3.new(0,0,0)
-            hrp.RotVelocity = Vector3.new(0,0,0)
-        end
-    end
+    end)
 end)
-
---- ========================================== ---
----                 TAB CREATOR                ---
---- ========================================== ---
 
 local tabs = {}
 local pages = {}
@@ -396,14 +388,18 @@ addToggle(ESPPage, "Box ESP", function(s) espEnabled.Box = s end)
 addToggle(ESPPage, "Health ESP", function(s) espEnabled.Health = s end)
 
 addToggle(MovePage, "Speed Hack (70)", function(s) 
-    if player.Character and player.Character:FindFirstChild("Humanoid") then
-        player.Character.Humanoid.WalkSpeed = s and 70 or 16 
-    end
+    pcall(function()
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.WalkSpeed = s and 70 or 16 
+        end
+    end)
 end)
 addToggle(MovePage, "Jump Power (120)", function(s)
-    if player.Character and player.Character:FindFirstChild("Humanoid") then
-        player.Character.Humanoid.JumpPower = s and 120 or 50
-    end
+    pcall(function()
+        if player.Character and player.Character:FindFirstChild("Humanoid") then
+            player.Character.Humanoid.JumpPower = s and 120 or 50
+        end
+    end)
 end)
 
 addToggle(MiscPage, "Anti-Void", function(s) movement.AntiVoid = s end)
