@@ -26,8 +26,8 @@ end
 
 local SetupFrame = Instance.new("Frame")
 SetupFrame.Name = "SetupFrame"
-SetupFrame.Size = UDim2.new(0, 320, 0, 160)
-SetupFrame.Position = UDim2.new(0.5, -160, 0.5, -80)
+SetupFrame.Size = UDim2.new(0, 400, 0, 250)
+SetupFrame.Position = UDim2.new(0.5, -200, 0.5, -125)
 SetupFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 SetupFrame.BorderSizePixel = 0
 SetupFrame.Parent = ScreenGui
@@ -45,12 +45,12 @@ applyDarkRedGradient(SetupFrame)
 
 local QuestionText = Instance.new("TextLabel")
 QuestionText.Size = UDim2.new(1, 0, 0, 35)
-QuestionText.Position = UDim2.new(0, 0, 0, 15)
+QuestionText.Position = UDim2.new(0, 0, 0, 30)
 QuestionText.BackgroundTransparency = 1
 QuestionText.Text = "Which device are you using?"
 QuestionText.TextColor3 = Color3.fromRGB(255, 255, 255)
 QuestionText.Font = Enum.Font.GothamBold
-QuestionText.TextSize = 16
+QuestionText.TextSize = 18
 QuestionText.Parent = SetupFrame
 
 local randomTexts = {
@@ -65,34 +65,34 @@ local chosenText = randomTexts[math.random(1, #randomTexts)]
 
 local SubText = Instance.new("TextLabel")
 SubText.Size = UDim2.new(1, 0, 0, 20)
-SubText.Position = UDim2.new(0, 0, 0, 45)
+SubText.Position = UDim2.new(0, 0, 0, 70)
 SubText.BackgroundTransparency = 1
 SubText.Text = chosenText
 SubText.TextColor3 = Color3.fromRGB(200, 200, 200)
 SubText.Font = Enum.Font.GothamItalic
-SubText.TextSize = 13
+SubText.TextSize = 14
 SubText.Parent = SetupFrame
 
 local BtnPC = Instance.new("TextButton")
-BtnPC.Size = UDim2.new(0, 120, 0, 38)
-BtnPC.Position = UDim2.new(0, 25, 0, 95)
+BtnPC.Size = UDim2.new(0, 140, 0, 45)
+BtnPC.Position = UDim2.new(0, 40, 0, 150)
 BtnPC.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 BtnPC.Text = "COMPUTER"
 BtnPC.TextColor3 = Color3.fromRGB(255, 255, 255)
 BtnPC.Font = Enum.Font.GothamBold
-BtnPC.TextSize = 13
+BtnPC.TextSize = 14
 BtnPC.Parent = SetupFrame
 
 Instance.new("UICorner", BtnPC).CornerRadius = UDim.new(0, 8)
 
 local BtnPhone = Instance.new("TextButton")
-BtnPhone.Size = UDim2.new(0, 120, 0, 38)
-BtnPhone.Position = UDim2.new(1, -145, 0, 95)
+BtnPhone.Size = UDim2.new(0, 140, 0, 45)
+BtnPhone.Position = UDim2.new(1, -180, 0, 150)
 BtnPhone.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 BtnPhone.Text = "MOBILE"
 BtnPhone.TextColor3 = Color3.fromRGB(255, 255, 255)
 BtnPhone.Font = Enum.Font.GothamBold
-BtnPhone.TextSize = 13
+BtnPhone.TextSize = 14
 BtnPhone.Parent = SetupFrame
 
 Instance.new("UICorner", BtnPhone).CornerRadius = UDim.new(0, 8)
