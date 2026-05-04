@@ -7,16 +7,13 @@ local Camera = workspace.CurrentCamera
 local player = Players.LocalPlayer
 local playerGui = player:WaitForChild("PlayerGui")
 
--- VALIDATE DRAWING API
 local isDrawingSupported = (typeof(Drawing) == "table" and Drawing.new ~= nil)
 
--- 1. SCREEN GUI MAIN
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "ViperHub_V4"
 ScreenGui.ResetOnSpawn = false
 ScreenGui.Parent = playerGui
 
--- Gradient Maker Utility
 local function applyDarkRedGradient(parent)
     local grad = Instance.new("UIGradient")
     grad.Color = ColorSequence.new({
@@ -28,14 +25,13 @@ local function applyDarkRedGradient(parent)
 end
 
 -- ========================================== --
---          SETUP SCREEN (LAYOUT FIXED)       --
+--          SETUP SCREEN                      --
 -- ========================================== --
 
 local SetupFrame = Instance.new("Frame")
 SetupFrame.Name = "SetupFrame"
-
-SetupFrame.Size = UDim2.new(0, 340, 0, 200)
-SetupFrame.Position = UDim2.new(0.5, -170, 0.5, -100)
+SetupFrame.Size = UDim2.new(0, 340, 0, 180)
+SetupFrame.Position = UDim2.new(0.5, -170, 0.5, -90)
 SetupFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 SetupFrame.BorderSizePixel = 0
 SetupFrame.Parent = ScreenGui
@@ -52,7 +48,7 @@ SetupStroke.Parent = SetupFrame
 applyDarkRedGradient(SetupFrame)
 
 local QuestionText = Instance.new("TextLabel")
-QuestionText.Size = UDim2.new(1, 0, 0, 40)
+QuestionText.Size = UDim2.new(1, 0, 0, 35)
 QuestionText.Position = UDim2.new(0, 0, 0, 15)
 QuestionText.BackgroundTransparency = 1
 QuestionText.Text = "Which device are you using?"
@@ -74,7 +70,7 @@ local chosenText = randomTexts[math.random(1, #randomTexts)]
 
 local SubText = Instance.new("TextLabel")
 SubText.Size = UDim2.new(1, 0, 0, 20)
-SubText.Position = UDim2.new(0, 0, 0, 55)
+SubText.Position = UDim2.new(0, 0, 0, 50)
 SubText.BackgroundTransparency = 1
 SubText.Text = chosenText
 SubText.TextColor3 = Color3.fromRGB(200, 200, 200)
@@ -82,9 +78,10 @@ SubText.Font = Enum.Font.GothamItalic
 SubText.TextSize = 13
 SubText.Parent = SetupFrame
 
+
 local BtnPC = Instance.new("TextButton")
-BtnPC.Size = UDim2.new(0, 130, 0, 45)
-BtnPC.Position = UDim2.new(0, 25, 0, 130) -- Posisi diturunkan pas
+BtnPC.Size = UDim2.new(0, 130, 0, 42)
+BtnPC.Position = UDim2.new(0, 25, 0, 105)
 BtnPC.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 BtnPC.Text = "COMPUTER"
 BtnPC.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -97,8 +94,8 @@ BtnPCCorner.CornerRadius = UDim.new(0, 8)
 BtnPCCorner.Parent = BtnPC
 
 local BtnPhone = Instance.new("TextButton")
-BtnPhone.Size = UDim2.new(0, 130, 0, 45)
-BtnPhone.Position = UDim2.new(1, -155, 0, 130) -- Posisi diturunkan pas
+BtnPhone.Size = UDim2.new(0, 130, 0, 42)
+BtnPhone.Position = UDim2.new(1, -155, 0, 105)
 BtnPhone.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 BtnPhone.Text = "MOBILE"
 BtnPhone.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -111,7 +108,7 @@ BtnPhoneCorner.CornerRadius = UDim.new(0, 8)
 BtnPhoneCorner.Parent = BtnPhone
 
 -- ========================================== --
---                  MAIN HUB UI               --
+--          MAIN HUB UI (CLEAN ENGLISH)       --
 -- ========================================== --
 
 local MainFrame = Instance.new("Frame")
@@ -171,7 +168,6 @@ local combat = {Aimbot = false, SilentAim = false, FOVCircle = false, FOVRadius 
 local movement = {SpinBot = false, AntiVoid = false}
 local misc = {FullBright = false, Fling = false}
 
--- 1. FOV Circle Drawing Safe Loader
 local fovCircle = nil
 if isDrawingSupported then
     pcall(function()
@@ -195,7 +191,7 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- 2. Aimbot Logic
+
 local function getClosestPlayer()
     local closestPlayer = nil
     local shortestDistance = combat.FOVCircle and combat.FOVRadius or math.huge
@@ -224,7 +220,6 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- 3. Hitbox Expander Logic
 RunService.RenderStepped:Connect(function()
     if combat.HitboxSize > 2 then
         for _, v in pairs(Players:GetPlayers()) do
@@ -241,7 +236,6 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- 4. FullBright Logic
 local origBrightness = Lighting.Brightness
 local origClockTime = Lighting.ClockTime
 RunService.RenderStepped:Connect(function()
@@ -256,7 +250,6 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- 5. Anti-Void Logic
 local antiVoidPart = Instance.new("Part")
 antiVoidPart.Size = Vector3.new(2048, 1, 2048)
 antiVoidPart.Transparency = 1
@@ -273,7 +266,6 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- 6. Fling Logic
 RunService.RenderStepped:Connect(function()
     if misc.Fling and player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
         local hrp = player.Character.HumanoidRootPart
@@ -364,7 +356,6 @@ local function addToggle(parentPage, text, callback)
     Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 8)
 end
 
--- LOADING ENGINE
 local function LoadHub(isMobile)
     SetupFrame:Destroy()
     MainFrame.Visible = true
@@ -392,13 +383,11 @@ end
 BtnPC.MouseButton1Click:Connect(function() LoadHub(false) end)
 BtnPhone.MouseButton1Click:Connect(function() LoadHub(true) end)
 
--- CREATE TABS
 local CombatPage = createTab("Combat", true)
 local ESPPage = createTab("Visuals", false)
 local MovePage = createTab("Movement", false)
 local MiscPage = createTab("Others", false)
 
--- ADDING FULL ENGLISH TOGGLES
 addToggle(CombatPage, "Aimbot (Right Click)", function(s) combat.Aimbot = s end)
 addToggle(CombatPage, "FOV Circle", function(s) combat.FOVCircle = s end)
 addToggle(CombatPage, "Hitbox Expander", function(s) combat.HitboxSize = s and 10 or 2 end)
@@ -421,7 +410,6 @@ addToggle(MiscPage, "Anti-Void", function(s) movement.AntiVoid = s end)
 addToggle(MiscPage, "Full Bright", function(s) misc.FullBright = s end)
 addToggle(MiscPage, "Fling Mode", function(s) misc.Fling = s end)
 
--- CLOSE BUTTON
 local Close = Instance.new("TextButton")
 Close.Size = UDim2.new(0, 30, 0, 30)
 Close.Position = UDim2.new(1, -35, 0, 7)
