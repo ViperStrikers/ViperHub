@@ -33,7 +33,7 @@ end
 
 local SetupFrame = Instance.new("Frame")
 SetupFrame.Name = "SetupFrame"
--- Diperbesar sedikit tingginya biar muat semua
+
 SetupFrame.Size = UDim2.new(0, 340, 0, 200)
 SetupFrame.Position = UDim2.new(0.5, -170, 0.5, -100)
 SetupFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
@@ -111,7 +111,7 @@ BtnPhoneCorner.CornerRadius = UDim.new(0, 8)
 BtnPhoneCorner.Parent = BtnPhone
 
 -- ========================================== --
---          MAIN HUB UI (CLEAN ENGLISH)       --
+--                  MAIN HUB UI               --
 -- ========================================== --
 
 local MainFrame = Instance.new("Frame")
